@@ -93,7 +93,12 @@ void drawRectangles(void){
 int main(void){
     
     for(int i = 0; i < COUNT; i++){
-        numbers[i] = i;
+        numbers[i] = i + 1;
+    }
+
+    for (int i = COUNT - 1; i > 0; i--) {
+        int j = GetRandomValue(0, i);
+        swapInt(&numbers[i], &numbers[j]);
     }
 
     InitWindow(WIDTH, HEIGHT, "Sorting Visualiser");
