@@ -14,6 +14,8 @@ void swapInt(int *a, int *b) {
     *b = temp;
 }
 
+// Bubble sort: repeatedly swap adjacent out-of-order elements so larger values
+// "bubble" to the end each pass. Time: O(n^2) avg/worst, O(n) best (with optimization). Space: O(1).
 void bubbleSort(int arr[], int n) {
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
@@ -24,6 +26,8 @@ void bubbleSort(int arr[], int n) {
     }
 }
 
+// Insertion sort: build a sorted left side by inserting each new element into
+// its correct position. Time: O(n^2) avg/worst, O(n) best. Space: O(1).
 void insertionSort(int arr[], int n) {
     for (int i = 1; i < n; i++) {
         int key = arr[i];
@@ -37,6 +41,8 @@ void insertionSort(int arr[], int n) {
     }
 }
 
+// Selection sort: repeatedly pick the smallest remaining element and place it
+// at the next sorted position. Time: O(n^2) best/avg/worst. Space: O(1).
 void selectionSort(int arr[], int n) {
     for (int i = 0; i < n - 1; i++) {
         int minIndex = i;
