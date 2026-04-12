@@ -8,7 +8,52 @@
 
 int numbers[COUNT];
 
-void drawRectangles(){
+void swapInt(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void bubbleSort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swapInt(&arr[j], &arr[j + 1]);
+            }
+        }
+    }
+}
+
+void insertionSort(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+void selectionSort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        int minIndex = i;
+
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+
+        if (minIndex != i) {
+            swapInt(&arr[i], &arr[minIndex]);
+        }
+    }
+}
+
+void drawRectangles(void){
     const int leftPadding = 20;
     const int rightPadding = 20;
     const int topPadding = 20;
@@ -39,7 +84,7 @@ void drawRectangles(){
     }
 }
     
-int main(){
+int main(void){
     
     for(int i = 0; i < COUNT; i++){
         numbers[i] = i;
@@ -56,4 +101,3 @@ int main(){
     }
     return 0;
 }
-
