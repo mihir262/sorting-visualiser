@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <raylib.h>
+#include <stdlib.h>
 
 #define WIDTH 900
 #define HEIGHT 600
@@ -59,6 +60,28 @@ void selectionSort(int arr[], int n) {
     }
 }
 
+// Quick sort: pick a pivot, partition into smaller/larger sides, then recurse.
+// Time: O(n log n) avg/best, O(n^2) worst. Space: O(log n) average recursion stack.
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int pivot = arr[high];
+        int i = low - 1;
+
+        for (int j = low; j < high; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+                swapInt(&arr[i], &arr[j]);
+            }
+        }
+
+        swapInt(&arr[i + 1], &arr[high]);
+        int pivotIndex = i + 1;
+
+        quickSort(arr, low, pivotIndex - 1);
+        quickSort(arr, pivotIndex + 1, high);
+    }
+}
+
 void drawRectangles(void){
     const int leftPadding = 20;
     const int rightPadding = 20;
@@ -96,6 +119,7 @@ int main(void){
         numbers[i] = i + 1;
     }
 
+    //fisher yates shuffle - randomising the array
     for (int i = COUNT - 1; i > 0; i--) {
         int j = GetRandomValue(0, i);
         swapInt(&numbers[i], &numbers[j]);
