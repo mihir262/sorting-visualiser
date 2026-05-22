@@ -2,8 +2,8 @@
 #include <raylib.h>
 #include <stdlib.h>
 
-#define WIDTH 900
-#define HEIGHT 600
+#define WIDTH 1100
+#define HEIGHT 700
 
 #define COUNT 30
 
@@ -49,10 +49,10 @@ void swapInt(int *a, int *b) {
 }
 
 void drawRectangles(int highlightA, int highlightB){
-    const int leftPadding = 20;
-    const int rightPadding = 20;
-    const int topPadding = 20;
-    const int bottomPadding = 20;
+    const int leftPadding = 40;
+    const int rightPadding = 40;
+    const int topPadding = 120;
+    const int bottomPadding = 40;
 
     const float availableWidth = (float)(WIDTH - leftPadding - rightPadding);
     const float availableHeight = (float)(HEIGHT - topPadding - bottomPadding);
@@ -75,7 +75,9 @@ void drawRectangles(int highlightA, int highlightB){
         float x = leftPadding + i * (barWidth + gap);
         float y = HEIGHT - bottomPadding - barHeight;
 
-        Color barColor = RAYWHITE;
+        Color barColor = (i % 2 == 0)
+            ? (Color){80, 170, 255, 255}
+            : (Color){100, 220, 180, 255};
         if (i == highlightA) {
             barColor = RED;
         } else if (i == highlightB) {
@@ -87,12 +89,17 @@ void drawRectangles(int highlightA, int highlightB){
 }
 
 void drawFrame(void) {
+    const Color backgroundColor = (Color){12, 14, 24, 255};
+    const Color headerColor = (Color){220, 230, 245, 255};
+    const Color accentColor = (Color){120, 200, 255, 255};
+    const Color hintColor = (Color){170, 180, 190, 255};
+
     BeginDrawing();
-    ClearBackground(BLACK);
+    ClearBackground(backgroundColor);
     drawRectangles(activeA, activeB);
-    DrawText(TextFormat("Algorithm: %s", algorithmName(selectedAlgorithm)), 20, 15, 24, RAYWHITE);
-    DrawText("1 Bubble  2 Insertion  3 Selection  4 Quick  5 Merge  6 Counting", 20, 45, 18, LIGHTGRAY);
-    DrawText("SPACE Sort   R Reshuffle", 20, 68, 18, LIGHTGRAY);
+    DrawText(TextFormat("Algorithm: %s", algorithmName(selectedAlgorithm)), 30, 24, 28, headerColor);
+    DrawText("1 Bubble  2 Insertion  3 Selection  4 Quick  5 Merge  6 Counting", 30, 62, 20, accentColor);
+    DrawText("SPACE Sort   R Reshuffle", 30, 94, 18, hintColor);
     EndDrawing();
 }
 
