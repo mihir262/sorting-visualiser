@@ -16,7 +16,9 @@ typedef enum SortAlgorithm {
     SORT_BUBBLE,
     SORT_INSERTION,
     SORT_SELECTION,
-    SORT_QUICK
+    SORT_QUICK,
+    SORT_MERGE,
+    SORT_COUNTING
 } SortAlgorithm;
 
 SortAlgorithm selectedAlgorithm = SORT_BUBBLE;
@@ -31,6 +33,10 @@ const char *algorithmName(SortAlgorithm algorithm) {
             return "Selection";
         case SORT_QUICK:
             return "Quick";
+        case SORT_MERGE:
+            return "Merge";
+        case SORT_COUNTING:
+            return "Counting";
         default:
             return "Unknown";
     }
@@ -85,7 +91,7 @@ void drawFrame(void) {
     ClearBackground(BLACK);
     drawRectangles(activeA, activeB);
     DrawText(TextFormat("Algorithm: %s", algorithmName(selectedAlgorithm)), 20, 15, 24, RAYWHITE);
-    DrawText("1 Bubble  2 Insertion  3 Selection  4 Quick", 20, 45, 18, LIGHTGRAY);
+    DrawText("1 Bubble  2 Insertion  3 Selection  4 Quick  5 Merge  6 Counting", 20, 45, 18, LIGHTGRAY);
     DrawText("SPACE Sort   R Reshuffle", 20, 68, 18, LIGHTGRAY);
     EndDrawing();
 }
@@ -94,6 +100,14 @@ void animatedSwap(int arr[], int i, int j) {
     activeA = i;
     activeB = j;
     swapInt(&arr[i], &arr[j]);
+    drawFrame();
+    WaitTime(swapDelaySeconds);
+}
+
+void animatedSet(int arr[], int index, int value) {
+    activeA = index;
+    activeB = -1;
+    arr[index] = value;
     drawFrame();
     WaitTime(swapDelaySeconds);
 }
@@ -166,6 +180,104 @@ void quickSort(int arr[], int low, int high) {
     }
 }
 
+static void mergeRange(int arr[], int temp[], int left, int mid, int right) {
+    int i = left;
+    int j = mid + 1;
+    int k = left;
+
+    while (i <= mid && j <= right) {
+        if (arr[i] <= arr[j]) {
+            temp[k++] = arr[i++];
+        } else {
+            temp[k++] = arr[j++];
+        }
+    }
+
+    while (i <= mid) {
+        temp[k++] = arr[i++];
+    }
+
+    while (j <= right) {
+        temp[k++] = arr[j++];
+    }
+
+    for (int idx = left; idx <= right; idx++) {
+        animatedSet(arr, idx, temp[idx]);
+    }
+}
+
+static void mergeSortRange(int arr[], int temp[], int left, int right) {
+    if (left >= right) {
+        return;
+    }
+
+    int mid = left + (right - left) / 2;
+    mergeSortRange(arr, temp, left, mid);
+    mergeSortRange(arr, temp, mid + 1, right);
+    mergeRange(arr, temp, left, mid, right);
+}
+
+// Merge sort: divide, sort halves, then merge. Time: O(n log n). Space: O(n).
+void mergeSort(int arr[], int n) {
+    int *temp = malloc(sizeof(int) * n);
+    if (temp == NULL) {
+        fprintf(stderr, "Failed to allocate merge sort buffer.\n");
+        return;
+    }
+
+    mergeSortRange(arr, temp, 0, n - 1);
+    free(temp);
+}
+
+// Counting sort: count occurrences by value range, then rebuild. Time: O(n + k). Space: O(n + k).
+void countingSort(int arr[], int n) {
+    if (n <= 1) {
+        return;
+    }
+
+    int minValue = arr[0];
+    int maxValue = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < minValue) {
+            minValue = arr[i];
+        }
+        if (arr[i] > maxValue) {
+            maxValue = arr[i];
+        }
+    }
+
+    int range = maxValue - minValue + 1;
+    int *counts = calloc((size_t)range, sizeof(int));
+    int *output = malloc(sizeof(int) * n);
+    if (counts == NULL || output == NULL) {
+        fprintf(stderr, "Failed to allocate counting sort buffers.\n");
+        free(counts);
+        free(output);
+        return;
+    }
+
+    for (int i = 0; i < n; i++) {
+        counts[arr[i] - minValue]++;
+    }
+
+    for (int i = 1; i < range; i++) {
+        counts[i] += counts[i - 1];
+    }
+
+    for (int i = n - 1; i >= 0; i--) {
+        int value = arr[i];
+        int position = --counts[value - minValue];
+        output[position] = value;
+    }
+
+    for (int i = 0; i < n; i++) {
+        animatedSet(arr, i, output[i]);
+    }
+
+    free(counts);
+    free(output);
+}
+
 int main(void){
     
     for(int i = 0; i < COUNT; i++){
@@ -194,6 +306,12 @@ int main(void){
         if (IsKeyPressed(KEY_FOUR)) {
             selectedAlgorithm = SORT_QUICK;
         }
+        if (IsKeyPressed(KEY_FIVE)) {
+            selectedAlgorithm = SORT_MERGE;
+        }
+        if (IsKeyPressed(KEY_SIX)) {
+            selectedAlgorithm = SORT_COUNTING;
+        }
         if (IsKeyPressed(KEY_R)) {
             for (int i = 0; i < COUNT; i++) {
                 numbers[i] = i + 1;
@@ -216,6 +334,10 @@ int main(void){
                 selectionSort(numbers, COUNT);
             } else if (selectedAlgorithm == SORT_QUICK) {
                 quickSort(numbers, 0, COUNT - 1);
+            } else if (selectedAlgorithm == SORT_MERGE) {
+                mergeSort(numbers, COUNT);
+            } else if (selectedAlgorithm == SORT_COUNTING) {
+                countingSort(numbers, COUNT);
             }
             activeA = -1;
             activeB = -1;

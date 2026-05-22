@@ -15,6 +15,8 @@ make run
 - `2` Insertion sort
 - `3` Selection sort
 - `4` Quick sort
+- `5` Merge sort
+- `6` Counting sort
 - `SPACE` Start sorting animation
 - `R` Reshuffle bars
 
